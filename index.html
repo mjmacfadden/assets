@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assets Download</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2fbdb6;
+            --primary-dark: #249a94;
+            --navy: #0b1f3a;
+            --navy-soft: #142c4f;
+            --light-band: #f0fbfa;
+            --lighter-band: #e8f8f7;
+            --text-main: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-main);
+            background: linear-gradient(180deg, #ffffff, #f8fdfc);
+            min-height: 100vh;
+            padding: 60px 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .files-list {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 25px;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background-color 0.3s ease;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-item:hover {
+            background-color: var(--light-band);
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .file-details {
+            min-width: 0;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 6px;
+            word-break: break-word;
+        }
+
+        .file-extension {
+            display: inline-block;
+            background: rgba(47, 189, 182, 0.12);
+            color: var(--primary-dark);
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .download-btn {
+            background: var(--navy);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+            margin-left: 16px;
+        }
+
+        .download-btn:hover {
+            background: var(--navy-soft);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(11, 31, 58, 0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            color: var(--text-main);
+            font-size: 1.3rem;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 40px 16px;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .file-info {
+                width: 100%;
+            }
+
+            .download-btn {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>📦 Assets</h1>
+            <p>Download files with ease</p>
+        </div>
+        
+        <div id="files-container"></div>
+    </div>
+
+    <script>
+        // File list - update this array with your files
+        const files = [
+            { name: '3D Printed Fretboard 1.stl', path: 'assets/3d-printed-fretboard-1.stl' },
+            { name: '3D Printed Fretboard 2.stl', path: 'assets/3d-printed-fretboard-2.stl' }
+        ];
+
+        function getFileExtension(filename) {
+            return filename.split('.').pop().toUpperCase();
+        }
+
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            if (ext === 'stl') return '🔧';
+            if (ext === 'pdf') return '📄';
+            if (ext === 'zip') return '🗜️';
+            if (ext === 'jpg' || ext === 'png' || ext === 'gif') return '🖼️';
+            return '📦';
+        }
+
+        function renderFiles() {
+            const container = document.getElementById('files-container');
+            
+            if (files.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>No files available</h3>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="files-list">
+                    ${files.map(file => `
+                        <div class="file-item">
+                            <div class="file-info">
+                                <div class="file-icon">${getFileIcon(file.name)}</div>
+                                <div class="file-details">
+                                    <div class="file-name">${file.name}</div>
+                                    <span class="file-extension">${getFileExtension(file.name)}</span>
+                                </div>
+                            </div>
+                            <a href="${file.path}" download class="download-btn">
+                                ⬇️ Download
+                            </a>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Render files on page load
+        document.addEventListener('DOMContentLoaded', renderFiles);
+    </script>
+</body>
+</html>
